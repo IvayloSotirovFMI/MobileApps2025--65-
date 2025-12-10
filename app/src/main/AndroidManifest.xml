@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project">
         <activity android:name=".AddTaskActivity"/>
+        <activity android:name=".EditTaskActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TaskDAO taskDAO;
     private static final int ADD_TASK_REQUEST = 1;
+    private static final int EDIT_TASK_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,18 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
             startActivityForResult(intent, ADD_TASK_REQUEST);
         });
+
+        adapter.setOnTaskClickListener(task -> {
+            Intent intent = new Intent(MainActivity.this, EditTaskActivity.class);
+            intent.putExtra("task_id", task.getId());
+            intent.putExtra("task_text", task.getTitle());
+            startActivityForResult(intent, EDIT_TASK_REQUEST);
+        });
+
+
+        adapter.setOnTaskLongClickListener(task -> {
+            new Thread(() -> taskDAO.delete(task)).start();
+        });
     }
 
     @Override
@@ -63,6 +76,17 @@ public class MainActivity extends AppCompatActivity {
             if (taskText != null && !taskText.isEmpty()) {
                 Task newTask = new Task(taskText);
                 new Thread(() -> taskDAO.insert(newTask)).start();
+            }
+        }
+
+        if (requestCode == EDIT_TASK_REQUEST && resultCode == RESULT_OK && data != null) {
+            int id = data.getIntExtra("task_id", -1);
+            String updatedText = data.getStringExtra("task_text");
+
+            if (id != -1 && updatedText != null) {
+                Task task = new Task(updatedText);
+                task.setId(id);
+                new Thread(() -> taskDAO.update(task)).start();
             }
         }
     }

@@ -14,8 +14,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private ArrayList<Task> tasks;
 
+    private OnTaskClickListener clickListener;
+    private OnTaskLongClickListener longClickListener;
+
     public TaskAdapter(ArrayList<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public interface OnTaskClickListener {
+        void onTaskClick(Task task);
+    }
+
+    public void setOnTaskClickListener(OnTaskClickListener listener) {
+        this.clickListener = listener;
+    }
+
+    public interface OnTaskLongClickListener {
+        void onTaskLongClick(Task task);
+    }
+
+    public void setOnTaskLongClickListener(OnTaskLongClickListener listener) {
+        this.longClickListener = listener;
     }
 
     @NonNull
@@ -28,7 +47,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        holder.title.setText(tasks.get(position).getTitle());
+        Task task = tasks.get(position);
+
+        holder.title.setText(task.getTitle());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) clickListener.onTaskClick(task);
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (longClickListener != null) longClickListener.onTaskLongClick(task);
+            return true;
+        });
     }
 
     @Override
