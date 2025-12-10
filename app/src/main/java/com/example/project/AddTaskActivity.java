@@ -23,10 +23,8 @@ public class AddTaskActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> {
             String text = edtTaskName.getText().toString().trim();
             if (!text.isEmpty()) {
-
                 Intent result = new Intent();
                 result.putExtra("task_text", text);
-
                 setResult(RESULT_OK, result);
                 finish();
             }
